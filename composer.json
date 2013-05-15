@@ -1,0 +1,14 @@
+{
+    "name": "namshi/emailvision",
+    "description": "This small library provides support for the 'REST' interface exposed by Emailvision.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alessandro Nadalin",
+            "email": "alessandro.nadalin@gmail.com"
+        }
+    ],
+    "require": {
+
+    }
+}
