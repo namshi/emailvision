@@ -21,7 +21,7 @@ use Namshi\Emailvision\Client;
 $config = array(
     'random'            => 'iTag',
     'encrypt'           => 'sTag',
-    'senddate'          => '2012-01-01',
+    'senddate'          => new \DateTime(),
     'uidkey'            => 'uKey',
     'stype'             => 'stype',
 );
