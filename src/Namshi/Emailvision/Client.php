@@ -59,11 +59,38 @@ class Client extends BaseClient
      * @param string $body
      * @return Guzzle\Http\Message\MessageInterface
      */
-    public function createRequest($method = "GET", $uri = null, $headers = null, $body = null)
+    public function createRequest($method = "GET", $uri = null, $headers = null, $body = null, array $dyn = array())
     {
-        $uri = $this->getBaseUrl() . 'NMSREST?' . http_build_query($this->emailvisionConfig);
+        $uri = $this->getBaseUrl() . 'NMSREST?' . http_build_query($this->getQueryStringParameters($dyn));
 
         return parent::createRequest($method, $uri, $headers, $body);
+    }
+    
+    /**
+     * Returns all the query string parameters needed by the Emailvision REST
+     * api to work, assembling the dynamic variables as per their specification.
+     * 
+     * Example:
+     * - var1 = 1
+     * - var2 = 2
+     * 
+     * results in:
+     * ...&dyn=var1:1|var2:2
+     * 
+     * @param array $dyn
+     * @return array
+     */
+    protected function getQueryStringParameters(array $dyn = array())
+    {        
+        if (count($dyn)) {
+            foreach ($dyn as $key => $parameter) {
+                $dyn[$key] = sprintf("%s:%s", $key, $parameter);
+            }
+            
+            $this->emailvisionConfig['dyn'] = implode('|', $dyn);
+        }
+        
+        return $this->emailvisionConfig;
     }
     
     /**
@@ -79,7 +106,7 @@ class Client extends BaseClient
         try {
             $this->emailvisionConfig['email']       = $recipient;
 
-            return $this->send($this->createRequest());  
+            return $this->send($this->createRequest('GET', null, null, null, $dyn));  
         } catch (ServerErrorResponseException $e) {
             throw new Exception(sprintf(self::ERROR_SERVER, $e->getResponse()->getStatusCode(), $e->getResponse()->getBody(true)));
         }

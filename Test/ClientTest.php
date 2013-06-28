@@ -61,7 +61,10 @@ class ClientTest extends PHPUnit_Framework_TestCase
     
     public function testPassingDynamicVariablesToEmailvision()
     {
-        $this->markTestIncomplete("Test to be implemented");
+        $url = "http://api.notificationmessaging.com/NMSREST?random=iTag&encrypt=sTag&senddate=2012-01-01%2012%3A12%3A12&uidkey=uKey&stype=stype&email=email%40email.com&dyn=var%3A1%7Cvar2%3A2";
+        $client = new StubEmailVisionClient($this->config);
+        
+        $this->assertEquals($url, $client->sendEmail('email@email.com', array('var' => 1, 'var2' => 2)));
     }
     
     public function testSendingItReal()
@@ -79,14 +82,19 @@ class ClientTest extends PHPUnit_Framework_TestCase
                 'senddate'  => new \DateTime('2012-01-01 00:00:00   '),
             ));
 
-            $res = $client->sendEmail($email);
+            $res = $client->sendEmail($email, array(
+                'name'  => 'Hisham!',
+                'var'   => 'This text comes directly from a unit test!  ',
+            ));
         }
     }
     
     /**
      * @expectedException Namshi\Emailvision\Exception
+     * 
+     * The error comes since the email is invalid.
      */
-    public function testSendingItRealHasAnError()
+    public function testSendingItRealWithoutAValidEmailHasAnError()
     {
         $realConfigFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'emailvision.config';
         
