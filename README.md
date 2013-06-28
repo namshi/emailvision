@@ -3,10 +3,6 @@
 This small library provides support for the
 "REST" interface exposed by EmailVision.
 
-**THE LIBRARY IS CURRENTLY NOT FULLY TESTED YET**:
-even though we have unit tests, we still need to
-write integration tests, this is a WIP.
-
 ## Installation
 
 You can install this library via composer: have a look
@@ -31,7 +27,7 @@ $config = array(
 );
 
 $emailvisionClient = new Client($config);
-$emailvisionClient->sendEmail("someone@gmail.com");
+$emailvisionClient->sendEmail("someone@gmail.com", array('name' => 'Alex'));
 ```
 
 ## Tests
@@ -44,3 +40,18 @@ php composer.phar update
 
 phpunit
 ```
+
+There are a couple integration tests that actually verify that the library
+works flawlessy, by actually hitting the emailvision API. Given that you need
+valid credentials for that, just create a file called `emailvision.config`
+in your system's temporary folder (`sys_get_temp_dir()`) with 3 parameters:
+
+``` php
+<?php
+
+$encrypt    = 'xxx';
+$random     = 'yyy';
+$email      = 'your.name@gmail.com';
+```
+
+Have a [look at the tests these variables are used](https://github.com/namshi/emailvision/blob/1.0.0/Test/ClientTest.php#L77).
