@@ -4,13 +4,18 @@ namespace Namshi\Emailvision;
 
 use Guzzle\Service\Client as BaseClient;
 use Namshi\Emailvision\Exception\Configuration as ConfigurationException;
+use InvalidArgumentException;
+use DateTime;
+use Guzzle\Http\Exception\ServerErrorResponseException;
+use Namshi\Emailvision\Exception;
 
 /**
  * HTTP client tied to the emailvision "REST" interface.
  */
 class Client extends BaseClient
 {
-    const BASE_URL = "http://api.notificationmessaging.com/";
+    const BASE_URL      = "http://api.notificationmessaging.com/";
+    const ERROR_SERVER  = "Unable to send email: the Emailvision server replied with a status code %d and provided these informations:\n%s"; 
     
     /**
      * Emailvision's configuration parameters.
@@ -40,8 +45,7 @@ class Client extends BaseClient
      */
     public function __construct(array $config, $httpConfig = null) 
     {
-        $this->validateConfiguration($config);
-        $this->emailvisionConfig = $config;
+        $this->emailvisionConfig = $this->validateConfiguration($config);
         
         parent::__construct(self::BASE_URL, $httpConfig);
     }
@@ -58,7 +62,7 @@ class Client extends BaseClient
     public function createRequest($method = "GET", $uri = null, $headers = null, $body = null)
     {
         $uri = $this->getBaseUrl() . 'NMSREST?' . http_build_query($this->emailvisionConfig);
-        
+
         return parent::createRequest($method, $uri, $headers, $body);
     }
     
@@ -72,15 +76,20 @@ class Client extends BaseClient
      */
     public function sendEmail($recipient, array $dyn = array())
     {
-        $this->emailvisionConfig['email'] = $recipient;
-        
-        return $this->send($this->createRequest());
+        try {
+            $this->emailvisionConfig['email']       = $recipient;
+
+            return $this->send($this->createRequest());  
+        } catch (ServerErrorResponseException $e) {
+            throw new Exception(sprintf(self::ERROR_SERVER, $e->getResponse()->getStatusCode(), $e->getResponse()->getBody(true)));
+        }
     }
     
     /**
      * Validates the configuration parameters required by Emailvision.
      * 
      * @param array $config
+     * @return array
      * @throws ConfigurationException
      */
     protected function validateConfiguration(array $config)
@@ -90,5 +99,13 @@ class Client extends BaseClient
                 throw new ConfigurationException($attribute);
             }
         }
+        
+        if (!$config['senddate'] instanceOf DateTime) {
+            throw new InvalidArgumentException("The 'senddate' parameter needs to be a \DateTime object");
+        }
+
+        $config['senddate'] = $config['senddate']->format('Y-m-d H:i:s');
+        
+        return $config;
     }
 }
