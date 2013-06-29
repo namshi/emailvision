@@ -34,6 +34,18 @@ class ClientTest extends PHPUnit_Framework_TestCase
         new \Namshi\Emailvision\Client(array());
     }
     
+    public function testYouCanInstantiateAClientWithoutSendDate()
+    {
+        $this->config = array(
+            'random'            => 'iTag',
+            'encrypt'           => 'sTag',
+            'uidkey'            => 'uKey',
+            'stype'             => 'stype',
+        );
+        
+        $this->client = new \Namshi\Emailvision\Client($this->config);        
+    }
+    
     public function testThatTheTargetUrlIsCorrect()
     {
         $url = "http://api.notificationmessaging.com/NMSREST?random=iTag&encrypt=sTag&senddate=2012-01-01%2012%3A12%3A12&uidkey=uKey&stype=stype";

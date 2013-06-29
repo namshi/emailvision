@@ -32,9 +32,17 @@ class Client extends BaseClient
     protected $mandatoryAttributes  = array(
         'random',
         'encrypt',
-        'senddate',
         'uidkey',
         'stype',
+    );
+    
+    /**
+     * Parameters that are optional in emailvision's configyration.
+     *
+     * @var array
+     */
+    protected $optionalParameters  = array(
+        'senddate',
     );
     
     /**
@@ -127,8 +135,12 @@ class Client extends BaseClient
             }
         }
         
-        if (!$config['senddate'] instanceOf DateTime) {
-            throw new InvalidArgumentException("The 'senddate' parameter needs to be a \DateTime object");
+        if (isset($config['senddate'])) {
+            if (!$config['senddate'] instanceOf DateTime) {
+                throw new InvalidArgumentException("The 'senddate' parameter needs to be a \DateTime object");
+            }
+        } else {
+            $config['senddate'] = new DateTime('2013-01-01 00:00:00');
         }
 
         $config['senddate'] = $config['senddate']->format('Y-m-d H:i:s');
