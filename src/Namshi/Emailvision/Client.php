@@ -14,8 +14,9 @@ use Namshi\Emailvision\Exception;
  */
 class Client extends BaseClient
 {
-    const BASE_URL      = "http://api.notificationmessaging.com/";
-    const ERROR_SERVER  = "Unable to send email: the Emailvision server replied with a status code %d and provided these informations:\n%s"; 
+    const BASE_URL                  = "http://api.notificationmessaging.com/";
+    const ERROR_SERVER              = "Unable to send email: the Emailvision server replied with a status code %d and provided these informations:\n%s"; 
+    const ERROR_UNKNOWN_TEMPLATE    = "The emailvision client doesnt have any configuration for the template '%s'";
     
     /**
      * Emailvision's configuration parameters.
@@ -59,19 +60,15 @@ class Client extends BaseClient
     }
     
     /**
-     * Create a request tied to emailvision's "REST" interface.
+     * Builds a URI for the emailvision's "REST" interface.
      * 
-     * @param string $method
-     * @param string $uri
-     * @param array $headers
-     * @param string $body
+     * @param string $emailTemplate
+     * @param array $dyn
      * @return Guzzle\Http\Message\MessageInterface
      */
-    public function createRequest($method = "GET", $uri = null, $headers = null, $body = null, array $dyn = array())
+    public function getEmailvisionUri($emailTemplate, array $dyn = array())
     {
-        $uri = $this->getBaseUrl() . 'NMSREST?' . http_build_query($this->getQueryStringParameters($dyn));
-
-        return parent::createRequest($method, $uri, $headers, $body);
+        return $this->getBaseUrl() . 'NMSREST?' . http_build_query($this->getQueryStringParameters($emailTemplate, $dyn));
     }
     
     /**
@@ -88,17 +85,17 @@ class Client extends BaseClient
      * @param array $dyn
      * @return array
      */
-    protected function getQueryStringParameters(array $dyn = array())
+    protected function getQueryStringParameters($emailTemplate, array $dyn = array())
     {        
         if (count($dyn)) {
             foreach ($dyn as $key => $parameter) {
                 $dyn[$key] = sprintf("%s:%s", $key, $parameter);
             }
             
-            $this->emailvisionConfig['dyn'] = implode('|', $dyn);
+            $this->emailvisionConfig[$emailTemplate]['dyn'] = implode('|', $dyn);
         }
         
-        return $this->emailvisionConfig;
+        return $this->emailvisionConfig[$emailTemplate];
     }
     
     /**
@@ -108,13 +105,18 @@ class Client extends BaseClient
      * @param string $recipient
      * @param array $dyn
      * @return Response
+     * @throws Exception|InvalidArgumentException
      */
-    public function sendEmail($recipient, array $dyn = array())
+    public function sendEmail($template, $recipient, array $dyn = array())
     {
         try {
-            $this->emailvisionConfig['email']       = $recipient;
+            if (!isset($this->emailvisionConfig[$template])) {
+                throw new InvalidArgumentException(sprintf(self::ERROR_UNKNOWN_TEMPLATE, $template));
+            }
+            
+            $this->emailvisionConfig[$template]['email'] = $recipient;
 
-            return $this->send($this->createRequest('GET', null, null, null, $dyn));  
+            return $this->send($this->createRequest('GET', $this->getEmailvisionUri($template, $dyn)));
         } catch (ServerErrorResponseException $e) {
             throw new Exception(sprintf(self::ERROR_SERVER, $e->getResponse()->getStatusCode(), $e->getResponse()->getBody(true)));
         }
@@ -129,21 +131,25 @@ class Client extends BaseClient
      */
     protected function validateConfiguration(array $config)
     {
-        foreach ($this->mandatoryAttributes as $attribute) {
-            if (!array_key_exists($attribute, $config)) {
-                throw new ConfigurationException($attribute);
+        foreach ($config as $template => $templateConfig) {
+            foreach ($this->mandatoryAttributes as $attribute) {
+                if (!is_array($templateConfig) || !array_key_exists($attribute, $templateConfig)) {
+                    throw new ConfigurationException($attribute, $template);
+                }
             }
-        }
-        
-        if (isset($config['senddate'])) {
-            if (!$config['senddate'] instanceOf DateTime) {
-                throw new InvalidArgumentException("The 'senddate' parameter needs to be a \DateTime object");
-            }
-        } else {
-            $config['senddate'] = new DateTime('2013-01-01 00:00:00');
-        }
 
-        $config['senddate'] = $config['senddate']->format('Y-m-d H:i:s');
+            if (isset($templateConfig['senddate'])) {
+                if (!$templateConfig['senddate'] instanceOf DateTime) {
+                    throw new InvalidArgumentException("The 'senddate' parameter needs to be a \DateTime object");
+                }
+                
+                $templateConfig['senddate'] = $templateConfig['senddate']->format('Y-m-d H:i:s');
+            } else {
+                $templateConfig['senddate'] = new DateTime('2013-01-01 00:00:00');
+            }
+
+            $config[$template]  = $templateConfig;
+        }
         
         return $config;
     }

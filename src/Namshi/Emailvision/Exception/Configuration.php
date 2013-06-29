@@ -10,13 +10,15 @@ use Exception;
  */
 class Configuration extends Exception
 {
+    const MESSAGE = "You must provide the attribute '%s' for the template '%s' in the Client configuration";
+    
     /**
      * Constructor
      * 
      * @param string $attribute
      */
-    public function __construct($attribute)
+    public function __construct($attribute, $template)
     {
-        $this->message = sprintf("You must provide the attribute '%s' in the Client configuration", $attribute);
+        $this->message = sprintf(self::MESSAGE, $attribute, $template);
     }
 }

@@ -18,16 +18,16 @@ is to define the configuration needed by Emailvision:
 
 use Namshi\Emailvision\Client;
 
-$config = array(
+$config = array('template_for_password_reset_email' => array(
     'random'            => 'iTag',
     'encrypt'           => 'sTag',
     'senddate'          => new \DateTime(),
     'uidkey'            => 'uKey',
     'stype'             => 'stype',
-);
+));
 
 $emailvisionClient = new Client($config);
-$emailvisionClient->sendEmail("someone@gmail.com", array('name' => 'Alex'));
+$emailvisionClient->sendEmail("template_for_password_reset_email", "someone@gmail.com", array('name' => 'Alex'));
 ```
 
 ## Tests
