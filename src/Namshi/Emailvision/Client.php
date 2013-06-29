@@ -145,7 +145,8 @@ class Client extends BaseClient
                 
                 $templateConfig['senddate'] = $templateConfig['senddate']->format('Y-m-d H:i:s');
             } else {
-                $templateConfig['senddate'] = new DateTime('2013-01-01 00:00:00');
+                $date                       = new DateTime('2013-01-01 00:00:00');
+                $templateConfig['senddate'] = $date->format('Y-m-d H:i:s');
             }
 
             $config[$template]  = $templateConfig;
