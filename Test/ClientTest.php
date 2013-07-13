@@ -117,6 +117,8 @@ class ClientTest extends PHPUnit_Framework_TestCase
                 'name'  => 'Hisham!',
                 'var'   => 'This text comes directly from a unit test!  ',
             ));
+        } else {
+            $this->markTestSkipped();
         }
     }
     
@@ -141,6 +143,8 @@ class ClientTest extends PHPUnit_Framework_TestCase
             )));
 
             $res = $client->sendEmail('sample_email_template', 'a');
+        } else {
+            $this->markTestSkipped();
         }
     }
 }
