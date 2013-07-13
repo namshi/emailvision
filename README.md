@@ -1,5 +1,7 @@
 # NAMSHI | EmailVision
 
+[![Build Status](https://travis-ci.org/namshi/emailvision.png)](https://travis-ci.org/namshi/emailvision)
+
 This small library provides support for the
 "REST" interface exposed by EmailVision.
 
