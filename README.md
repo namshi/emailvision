@@ -16,6 +16,8 @@ The include it into your `composer.json`:
 "namshi/emailvision": "1.0.*",
 ```
 
+Pick major and minor version according to your needs.
+
 ## Usage
 
 Using this library is pretty trivial, the only "difficult" thing to do
