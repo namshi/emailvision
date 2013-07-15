@@ -10,6 +10,12 @@ This small library provides support for the
 You can install this library via composer: have a look
 at the [package on packagist](https://packagist.org/packages/namshi/emailvision).
 
+The include it into your `composer.json`:
+
+```
+"namshi/emailvision": "1.0.*",
+```
+
 ## Usage
 
 Using this library is pretty trivial, the only "difficult" thing to do
