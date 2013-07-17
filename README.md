@@ -52,7 +52,7 @@ phpunit
 ```
 
 There are a couple integration tests that actually verify that the library
-works flawlessy, by actually hitting the emailvision API. Given that you need
+works flawlessly, by actually hitting the emailvision API. Given that you need
 valid credentials for that, just create a file called `emailvision.config`
 in your system's temporary folder (`sys_get_temp_dir()`) with 3 parameters:
 
