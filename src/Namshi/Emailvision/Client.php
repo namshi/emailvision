@@ -16,7 +16,7 @@ class Client extends BaseClient
 {
     const BASE_URL                  = "http://api.notificationmessaging.com/";
     const ERROR_SERVER              = "Unable to send email: the Emailvision server replied with a status code %d and provided these informations:\n%s"; 
-    const ERROR_UNKNOWN_TEMPLATE    = "The emailvision client doesnt have any configuration for the template '%s'";
+    const ERROR_UNKNOWN_TEMPLATE    = "The emailvision client doesn't have any configuration for the template '%s'";
     
     /**
      * Emailvision's configuration parameters.
@@ -26,7 +26,7 @@ class Client extends BaseClient
     protected $emailvisionConfig    = array();
     
     /**
-     * Parameters that are required in emailvision's configyration.
+     * Parameters that are required in emailvision's configuration.
      *
      * @var array
      */
@@ -38,7 +38,7 @@ class Client extends BaseClient
     );
     
     /**
-     * Parameters that are optional in emailvision's configyration.
+     * Parameters that are optional in emailvision's configuration.
      *
      * @var array
      */
@@ -81,7 +81,8 @@ class Client extends BaseClient
      * 
      * results in:
      * ...&dyn=var1:1|var2:2
-     * 
+     *
+     * @param string $emailTemplate
      * @param array $dyn
      * @return array
      */
@@ -101,7 +102,8 @@ class Client extends BaseClient
     /**
      * Sends a request with the specified $dyn variables to emailvision's system,
      * that will send a generated email to the $recipient.
-     * 
+     *
+     * @param string $template
      * @param string $recipient
      * @param array $dyn
      * @return Response
