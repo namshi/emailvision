@@ -14,8 +14,9 @@ class Configuration extends Exception
     
     /**
      * Constructor
-     * 
+     *
      * @param string $attribute
+     * @param string $template
      */
     public function __construct($attribute, $template)
     {
