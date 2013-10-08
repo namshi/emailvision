@@ -2,6 +2,7 @@
 
 namespace Namshi\Emailvision\Test;
 
+use Guzzle\Http\Message\Request;
 use \PHPUnit_Framework_TestCase;
 
 class ClientTest extends PHPUnit_Framework_TestCase
@@ -87,7 +88,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
     public function testThesenddateParameterNeedsToBeADateTimeObject()
     {
         $this->config['sample_email_template']['senddate'] = 'sss';
-        $client = new StubEmailVisionClient($this->config);
+        new StubEmailVisionClient($this->config);
     }
     
     public function testPassingDynamicVariablesToEmailvision()
@@ -113,7 +114,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
                 'senddate'  => new \DateTime('2012-01-01 00:00:00   '),
             )));
 
-            $res = $client->sendEmail('sample_email_template', $email, array(
+            $client->sendEmail('sample_email_template', $email, array(
                 'name'  => 'Hisham!',
                 'var'   => 'This text comes directly from a unit test!  ',
             ));
@@ -142,7 +143,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
                 'senddate'  => new \DateTime('2012-01-01 00:00:00   '),
             )));
 
-            $res = $client->sendEmail('sample_email_template', 'a');
+            $client->sendEmail('sample_email_template', 'a');
         } else {
             $this->markTestSkipped();
         }
@@ -153,6 +154,8 @@ class StubEmailVisionClient extends \Namshi\Emailvision\Client
 {
     public function send($request)
     {
-        return $request->getUrl();
+        if (!is_array($request)) {
+            return $request->getUrl();
+        }
     }
 }
