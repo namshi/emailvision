@@ -5,7 +5,7 @@
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/adcce7f2-10b7-4f03-95e4-b276631184af/mini.png)](https://insight.sensiolabs.com/projects/adcce7f2-10b7-4f03-95e4-b276631184af)
 
 This small library provides support for the
-"REST" interface exposed by EmailVision.
+"SOAP" interface exposed by EmailVision.
 
 ## Installation
 

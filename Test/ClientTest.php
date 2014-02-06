@@ -14,12 +14,11 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->config = array('sample_email_template' => array(
             'random'            => 'iTag',
             'encrypt'           => 'sTag',
-            'senddate'          => new \DateTime('2012-01-01 12:12:12'),
             'uidkey'            => 'uKey',
             'stype'             => 'stype',
         ));
         
-        $this->client = new \Namshi\Emailvision\Client($this->config);        
+        $this->client = new \Namshi\Emailvision\Client($this->config);
     }
     
     public function testCreationOfTheClient()
@@ -43,66 +42,14 @@ class ClientTest extends PHPUnit_Framework_TestCase
             'uidkey'            => 'uKey',
             'stype'             => 'stype',
         ));
-        
-        $this->client = new \Namshi\Emailvision\Client($this->config);        
-    }
-    
-    public function testThatTheTargetUrlIsCorrect()
-    {
-        $url = "http://api.notificationmessaging.com/NMSREST?random=iTag&encrypt=sTag&senddate=2012-01-01%2012%3A12%3A12&uidkey=uKey&stype=stype&email=alessandro.nadalin%40gmail.com";
-        $config = array('sample_email_template' => array(
-            'random'            => 'iTag',
-            'encrypt'           => 'sTag',
-            'senddate'          => new \DateTime('2012-01-01 12:12:12'),
-            'uidkey'            => 'uKey',
-            'stype'             => 'stype',
-        ));
-        
-        $client = new StubEmailVisionClient($config);        
-        
-        $this->assertEquals($url, $client->sendEmail('sample_email_template', 'alessandro.nadalin@gmail.com'));
-    }
-    
-    public function testCreationOfTheFinalEmailVisionUrl()
-    {
-        $url = "http://api.notificationmessaging.com/NMSREST?random=iTag&encrypt=sTag&senddate=2012-01-01%2012%3A12%3A12&uidkey=uKey&stype=stype&email=email%40email.com";
-        $client = new StubEmailVisionClient($this->config);
-        
-        $this->assertEquals($url, $client->sendEmail('sample_email_template', 'email@email.com'));
-    }
-    
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testSendingAnInvalidEmailTemplateThrowAnException()
-    {
-        $url = "http://api.notificationmessaging.com/NMSREST?random=iTag&encrypt=sTag&senddate=2012-01-01%2012%3A12%3A12&uidkey=uKey&stype=stype&email=email%40email.com";
-        $client = new StubEmailVisionClient($this->config);
-        
-        $this->assertEquals($url, $client->sendEmail('xxx', 'email@email.com'));
-    }
-    
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testThesenddateParameterNeedsToBeADateTimeObject()
-    {
-        $this->config['sample_email_template']['senddate'] = 'sss';
-        new StubEmailVisionClient($this->config);
-    }
-    
-    public function testPassingDynamicVariablesToEmailvision()
-    {
-        $url = "http://api.notificationmessaging.com/NMSREST?random=iTag&encrypt=sTag&senddate=2012-01-01%2012%3A12%3A12&uidkey=uKey&stype=stype&email=email%40email.com&dyn=var%3A1%7Cvar2%3A2";
-        $client = new StubEmailVisionClient($this->config);
-        
-        $this->assertEquals($url, $client->sendEmail('sample_email_template', 'email@email.com', array('var' => 1, 'var2' => 2)));
+
+        $this->client = new \Namshi\Emailvision\Client($this->config);
     }
     
     public function testSendingItReal()
     {
         $realConfigFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'emailvision.config';
-        
+
         if (file_exists($realConfigFile)) {
             require $realConfigFile;
             
@@ -131,7 +78,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
     public function testSendingItRealWithoutAValidEmailHasAnError()
     {
         $realConfigFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'emailvision.config';
-        
+
         if (file_exists($realConfigFile)) {
             require $realConfigFile;
             
@@ -146,16 +93,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
             $client->sendEmail('sample_email_template', 'a');
         } else {
             $this->markTestSkipped();
-        }
-    }
-}
-
-class StubEmailVisionClient extends \Namshi\Emailvision\Client
-{
-    public function send($request)
-    {
-        if (!is_array($request)) {
-            return $request->getUrl();
         }
     }
 }
