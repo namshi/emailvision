@@ -8,9 +8,6 @@
             "email": "alessandro.nadalin@gmail.com"
         }
     ],
-    "require": {
-        "guzzle/guzzle": ">=3.1,<=3.7"
-    },
     "require-dev": {
         "phpunit/phpunit": "3.7.21"
     },
