@@ -13,7 +13,7 @@ use Namshi\Emailvision\Exception;
 class Client
 {
     const WSDL_URL                    = 'http://api.notificationmessaging.com/NMSOAP/NotificationService?wsdl';
-    const ERROR_SERVER                = 'Unable to send email: the Emailvision server replied with a status code %d and provided these informations:\n%s';
+    const ERROR_SERVER                = 'Unable to send email: the Emailvision server replied with "%s"';
     const ERROR_UNKNOWN_TEMPLATE      = 'The emailvision client doesn\'t have any configuration for the template \'%s\'';
     const SEND_REQUEST_SUCCESS_STATUS = 'success';
 
@@ -85,8 +85,7 @@ class Client
             throw new Exception(
                 sprintf(
                     self::ERROR_SERVER,
-                    $e->getResponse()->getStatusCode(),
-                    $e->getResponse()->getBody(true)
+                    $e->getMessage()
                 )
             );
         }
